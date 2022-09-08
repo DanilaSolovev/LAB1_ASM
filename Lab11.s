@@ -4,10 +4,8 @@ ONE EQU 0x01
     PRESERVE8
     THUMB
     AREA CONSTANT_FLASH, DATA, READONLY
-mas         DCB 0x2, 0x6, -0x4, 0x3, -0x8, 0x6, 0x1, -0x9, 0x4, 0x5, 0x3, -0x7
+mas         DCB 0x2, 0x6, -0x4, 0x3, -0x8, 0x6, 0x1, -0x9, 0x4, 0x5
 mas_size    DCB mas_size-mas
-mas1         DCB 0x2, 0x6, -0x4, 0x3, -0x8, 0x6, 0x1, -0x9, 0x4, 0x5, 0x3, -0x7
-mas_size1    DCB mas_size-mas
 
     AREA VERIABLE_RAM, DATA, READWRITE
 MAX_SIZEpar SPACE 1
@@ -15,7 +13,6 @@ MAX_SIZEpos SPACE 1
 mas_parity SPACE 12
 mas_positive SPACE 12
 avgres SPACE 1
-avgres1 SPACE 1
     AREA RESET, CODE, READONLY
     DCD STACK_TOP
     DCD Start
@@ -32,53 +29,35 @@ Start PROC
     LDR R1, =avgres
     STRB R0, [R1, #0x00]
     
-    LDR R0, =mas1
-    LDR R1, =mas_size1
-    LDRB R1, [R1, #0]
-    BL Allprog
-    LDR R1, =avgres1
-    STRB R0, [R1, #0x00]
     
     B .
     ENDP
 
 
 Allprog PROC
-    MOV R7, R1
     PUSH {LR}
-    SUB SP,R7
-    MOV R2,SP ;=mas_parity
+    SUB SP,R1
+    MOV R2,SP
+    LDR R2, =mas_parity
     BL parity_prog
-    SUB SP, #0x04
-    MOV R1, SP ;=MAX_SIZEpar
+    LDR R1, =MAX_SIZEpar
     STRB R0, [R1, #0]
     
     
-    
-    MOV R1, SP ;=MAX_SIZEpar
+    LDR R0, =mas_parity
+    LDR R1, =MAX_SIZEpar 
     LDRB R1, [R1, #0]
-    ADD SP, #0x04
-    MOV R0, SP ;=mas_parity
-    SUB SP, #0x04
-    SUB SP, R7
-    MOV R2, SP ;=mas_positive
+    LDR R2, =mas_positive
     BL positive_prog
-    SUB SP, #0x04
-    MOV R1, SP ;=MAX_SIZEpos
+    LDR R1, =MAX_SIZEpos
     STRB R0, [R1, #0x00]
 
 
-    MOV R1, SP ;=MAX_SIZEpos
+
+    LDR R0, =mas_positive
+    LDR R1, =MAX_SIZEpos
     LDRB R1, [R1, #0x00]
-    ADD SP, #0x04
-    MOV R0, SP ;=mas_positive
     BL avg_prog
-    
-    ;Возврат
-    ADD SP, R7
-    LDRB R1, [SP, #0x00]
-    ADD SP, #0x04
-    ADD SP, R7
     POP {LR}
     BX LR
     ENDP
