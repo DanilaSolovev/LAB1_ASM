@@ -27,24 +27,23 @@ avgres1 SPACE 1
 Start PROC
     LDR R0, =mas
     LDR R1, =mas_size
-    LDR R1, [R1, #0]
+    LDRB R1, [R1, #0]
     BL Allprog
     LDR R1, =avgres
-    STR R0, [R1, #0x00]
+    STRB R0, [R1, #0x00]
     
     LDR R0, =mas1
     LDR R1, =mas_size1
-    LDR R1, [R1, #0]
+    LDRB R1, [R1, #0]
     BL Allprog
     LDR R1, =avgres1
-    STR R0, [R1, #0x00]
+    STRB R0, [R1, #0x00]
     
     B .
     ENDP
 
 
 Allprog PROC
-    
     MOV R7, R1
     PUSH {LR}
     SUB SP,R7
@@ -52,12 +51,12 @@ Allprog PROC
     BL parity_prog
     SUB SP, #0x04
     MOV R1, SP ;=MAX_SIZEpar
-    STR R0, [R1, #0]
+    STRB R0, [R1, #0]
     
     
     
     MOV R1, SP ;=MAX_SIZEpar
-    LDR R1, [R1, #0]
+    LDRB R1, [R1, #0]
     ADD SP, #0x04
     MOV R0, SP ;=mas_parity
     SUB SP, #0x04
@@ -66,18 +65,18 @@ Allprog PROC
     BL positive_prog
     SUB SP, #0x04
     MOV R1, SP ;=MAX_SIZEpos
-    STR R0, [R1, #0x00]
+    STRB R0, [R1, #0x00]
 
 
     MOV R1, SP ;=MAX_SIZEpos
-    LDR R1, [R1, #0x00]
+    LDRB R1, [R1, #0x00]
     ADD SP, #0x04
     MOV R0, SP ;=mas_positive
     BL avg_prog
     
     ;Возврат
     ADD SP, R7
-    LDR R1, [SP, #0x00]
+    LDRB R1, [SP, #0x00]
     ADD SP, #0x04
     ADD SP, R7
     POP {LR}
@@ -101,8 +100,8 @@ srav
     MUL R5, R5, R6
     CMP R5, R3
     BNE iplus
-    LDR R5, [R0, R3]
-    STR R5, [R2, R4]
+    LDRB R5, [R0, R3]
+    STRB R5, [R2, R4]
     ADD R4, #0x01
 iplus    
     ADD R3, #0x01
@@ -128,10 +127,10 @@ positive_prog PROC
 srav1
     CMP R3, R1
     BEQ exit1
-    LDR R0, [R5, R3]
+    LDRB R0, [R5, R3]
     CMP R0, #0xF0
     BGT iplus1
-    STR R0, [R2, R4]
+    STRB R0, [R2, R4]
     ADD R4, #0x01
 iplus1    
     ADD R3, #0x01
@@ -156,7 +155,7 @@ avg_prog PROC
 srav2
     CMP R3, R1
     BEQ exit2
-    LDR R0, [R2, R3]
+    LDRB R0, [R2, R3]
     ADD R5, R0
     ADD R3, #0x01
     B srav2
